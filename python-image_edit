@@ -1,0 +1,76 @@
+import PIL
+from PIL import Image,ImageFont,ImageEnhance,ImageDraw
+
+image=Image.open("readonly/msi_recruitment.gif")
+image=image.convert('RGBA')
+
+fnt = ImageFont.truetype('readonly/fanwood-webfont.ttf', 40)
+images = []
+
+#make rectangle
+def dRect():
+    img1=image.copy()
+    rectangle = Image.new('RGB', (img1.width, 40), (0, 0, 0)) 
+    contact_sheet_fnlz = PIL.Image.new(img1.mode, (img1.width, img1.height + rectangle.height))
+    contact_sheet_fnlz.paste(rectangle, (0, img1.height))
+    contact_sheet_fnlz.paste(img1, (0, 0))
+    txtz = Image.new("RGBA", contact_sheet_fnl.size, (255, 255, 255, 0))    
+    return ImageDraw.Draw(txtz), contact_sheet_fnlz,txtz
+
+#channel-0
+for i in [0.1,0.5,0.9]:    
+    d,contact_sheet_fnl,txt=dRect()
+    #draw text
+    d.text((0, 458), 'channel 0 intensity {}'.format(i), font=fnt, fill=(225, 225, 225, 225))
+    f_img = Image.alpha_composite(contact_sheet_fnl, txt)
+    
+    pimg= f_img.load()
+    for ht in range(f_img.height):
+        for wdt in range(f_img.width):
+            pimg[wdt,ht]=(int(i*pimg[wdt,ht][0]),pimg[wdt,ht][1],pimg[wdt,ht][2])
+
+    images.append(f_img) 
+                   
+#channel 1
+for i in [0.1,0.5,0.9]:    
+    d,contact_sheet_fnl,txt=dRect()
+    #draw text
+    d.text((0, 458), 'channel 1 intensity {}'.format(i), font=fnt, fill=(225, 225, 225, 225))
+    f_img = Image.alpha_composite(contact_sheet_fnl, txt)
+    
+    pimg= f_img.load()
+    for ht in range(f_img.height):
+        for wdt in range(f_img.width):
+            pimg[wdt,ht]=(pimg[wdt,ht][0],int(i*pimg[wdt,ht][1]),pimg[wdt,ht][2])
+
+    images.append(f_img) 
+        
+#channel 2
+for i in [0.1,0.5,0.9]:    
+    d,contact_sheet_fnl,txt=dRect()
+    #draw text
+    d.text((0, 458), 'channel 1 intensity {}'.format(i), font=fnt, fill=(225, 225, 225, 225))
+    f_img = Image.alpha_composite(contact_sheet_fnl, txt)
+    
+    pimg= f_img.load()
+    for ht in range(f_img.height):
+        for wdt in range(f_img.width):
+            pimg[wdt,ht]=(pimg[wdt,ht][0],pimg[wdt,ht][1],int(i*pimg[wdt,ht][2]))
+
+    images.append(f_img)
+
+#contact_sheet    
+first_image=images[0]
+contact_sheet = PIL.Image.new(first_image.mode, (first_image.width * 3, first_image.height * 3))
+x = 0
+y = 0
+
+for image in images:
+    contact_sheet.paste(image, (x, y))
+    if x + first_image.width == contact_sheet.width:
+        x = 0
+        y = y + first_image.height 
+    else:
+        x = x + first_image.width
+
+display(contact_sheet)
